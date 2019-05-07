@@ -1,6 +1,7 @@
 import numpy as np
 import math
 from sympy import *
+from numba import jit
 
 def check_stationarity(x, interval_am, var = 0.01):
     interval_median = np.empty(interval_am)
@@ -63,12 +64,23 @@ def covariation(y1, y2, shift):
         sum +=( y1[i] - y1.mean()) * (y2[i+shift] - y2.mean())
     return sum / len(y1)
 
+#@jit(parallel = True)
 def correlation(y1, y2, shift):
     div = 0
+    y1_mean = y1.mean()
+    y2_mean = y2.mean()
     for i in range(len(y1) - shift):
-        div +=( y1[i] - y1.mean()) * (y2[i+shift] - y2.mean())
-    divider = (y1 - y1.mean()) ** 2
+        div +=( y1[i] - y1_mean) * (y2[i+shift] - y2_mean)
+    divider = (y1 - y1_mean) ** 2
     return div / divider.sum()
+
+# @jit()
+def correliation_shifts(y1, y2, from_shift=0, to_shift=1000):
+    corr = np.zeros(to_shift - from_shift)
+    for i in range(len(corr)):
+        corr[i] = correlation(y1, y2, i)
+    return corr
+
 
 if __name__ == '__main__':
     intervals = 10
