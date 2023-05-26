@@ -4,7 +4,8 @@ import numpy as np
 from matplotlib import pyplot as plt
 from numba import jit
 import gradational_transformations as GT
-from scipy.misc import imresize
+# from scipy.misc import imresize
+from skimage.transform import resize as imresize
 import resizing as reS
 import analysys
 from numba import jit
